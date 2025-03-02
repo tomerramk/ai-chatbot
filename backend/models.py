@@ -62,18 +62,11 @@ class ChatbotModel:
         # Construct full prompt with optional persona and conversation history
         full_prompt = ""
         
-        # Add persona if provided
-        if persona:
-            full_prompt += f"You are a helpful assistant with the following persona: {persona}\n\n"
-        else:
-            full_prompt += "You are a helpful assistant.\n\n"
-        
-        # Add conversation history
-        for user_msg, assistant_msg in conversation_history:
-            full_prompt += f"User: {user_msg}\nAssistant: {assistant_msg}\n\n"
-        
+        # Use the provided persona or default to "You are a helpful assistant."
+        system_message = f"System: {persona.strip()}" if persona else "System: You are a helpful assistant."
+
         # Add current prompt
-        full_prompt += f"User: {prompt}\nAssistant:"
+        full_prompt = f"{system_message}\n\nUser: {prompt}\nAssistant:"
         
         # Tokenize the prompt
         inputs = self.tokenizer(full_prompt, return_tensors="pt").to(self.model.device)
@@ -92,6 +85,8 @@ class ChatbotModel:
         # Decode the response and clean it up
         response_ids = output[0][inputs["input_ids"].shape[1]:]
         response = self.tokenizer.decode(response_ids, skip_special_tokens=True).strip()
+        # Ensure it does not continue generating additional questions
+        response = response.split("\nUser:")[0].strip()
         
         return response
 

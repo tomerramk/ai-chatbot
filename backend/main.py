@@ -12,6 +12,7 @@ from logger import logger
 ISRAEL_TZ = pytz.timezone("Asia/Jerusalem")
 
 sessions = {}
+prsonality = ""
 
 def get_timestamp():
     """Returns the current UTC timestamp in ISO format with timezone awareness."""
@@ -42,6 +43,7 @@ async def handle_client(websocket):
 
         # Add username to sessions
         sessions[session_id] = websocket
+        prsonality = init_data.get("personality", "default")
         response_data={"type": "success", "message": "Login successfull", "timestamp": get_timestamp()}
         await websocket.send(json.dumps(response_data))
         logger.info(f"Server sent to {session_id}: {response_data}")
@@ -57,8 +59,8 @@ async def handle_client(websocket):
                     break  # Exit the loop when user explicitly disconnects
 
                 if data.get("type") == "chat":
-                    response = chatbot.generate_response(message)
-                    response_data = {"type": "ai_response", "message": response, "timetamp": get_timestamp()}
+                    response = chatbot.generate_response(message, persona=prsonality)
+                    response_data = {"type": "ai_response", "message": response, "timestamp": get_timestamp()}
                     await websocket.send(json.dumps(response_data))
                     logger.info(f"Server sent to {session_id}: {json.dumps(response_data)}")
 

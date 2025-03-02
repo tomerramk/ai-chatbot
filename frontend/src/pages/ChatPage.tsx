@@ -14,6 +14,7 @@ const ChatPage = () => {
   const messages = useWebSocketStore((state) => state.messages);
   const userCount = useWebSocketStore((state) => state.userCount);
   const addMessage = useWebSocketStore((state) => state.addMessage);
+  const clearMessages = useWebSocketStore((state) => state.clearMessages);
 
   const { readyState, sendMessage, disconnect } = useWebSocketContext();
 
@@ -35,6 +36,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (readyState !== WebSocket.OPEN) {
       navigate("/");
+      clearMessages();
     }
   }, [readyState, navigate]);
 
@@ -51,7 +53,10 @@ const ChatPage = () => {
         username: username,
         message: input,
         sender: "user",
-        timestamp: new Date().toLocaleDateString(),
+        timestamp:
+          new Date().toLocaleDateString() +
+          " " +
+          new Date().toLocaleTimeString(),
       });
       sendMessage(input);
       setInput("");
@@ -60,9 +65,10 @@ const ChatPage = () => {
 
   // Function to render different message types
   const renderMessage = (msg: Message, index: number) => {
+    console.log(msg);
     if (msg.type === "alert") {
       return (
-        <div key={index} className="flex  justify-center my-2">
+        <div key={index} className="flex justify-center my-2">
           <div className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-medium">
             <span className="font-semibold">{msg.username}</span>
             {msg.action === "login" ? " joined" : " left"}
@@ -80,7 +86,14 @@ const ChatPage = () => {
               : "bg-teal-200 text-teal-900 mr-auto"
           }`}
         >
-          {msg.message}
+          <div className="mb-1">{msg.message}</div>
+          <div
+            className={`text-xs mt-1 text-right ${
+              msg.sender === "user" ? "text-teal-200" : "text-teal-700"
+            }`}
+          >
+            {msg.timestamp}
+          </div>
         </div>
       );
     }

@@ -18,6 +18,8 @@ export type Message =
 interface WebSocketStore {
   username: string | null;
   setUsername: (username: string | null) => void;
+  personality: string;
+  setPersonality: (personality: string) => void;
   socketUrl: string;
   setSocketUrl: (socketUrl: string) => void;
   userCount: number;
@@ -29,6 +31,8 @@ interface WebSocketStore {
 const useWebSocketStore = create<WebSocketStore>((set) => ({
   username: null,
   setUsername: (username) => set({ username }),
+  personality: "default",
+  setPersonality: (personality) => set({ personality }),
   socketUrl: "",
   setSocketUrl: (socketUrl) => {
     set({ socketUrl });

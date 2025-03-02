@@ -1,14 +1,24 @@
 export function formatTimestamp(isoString: string): string {
   const date = new Date(isoString);
-  console.log({ date });
+
   if (isNaN(date.getTime())) {
-    console.error("Invalid date:", isoString);
     return "Invalid date";
   }
 
-  return date.toLocaleTimeString("en-IL", {
-    hour: "2-digit",
+  // Format date as M/D/YYYY
+  const datePart = date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+
+  // Format time as h:mm:ss AM/PM
+  const timePart = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
     minute: "2-digit",
     second: "2-digit",
+    hour12: true,
   });
+
+  return `${datePart} ${timePart}`;
 }

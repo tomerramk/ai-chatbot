@@ -7,6 +7,7 @@ const useCustomWebSocket = () => {
   const socketUrl = useWebSocketStore((state) => state.socketUrl);
   const username = useWebSocketStore((state) => state.username);
   const setUsername = useWebSocketStore((state) => state.setUsername);
+  const personality = useWebSocketStore((state) => state.personality);
   const setUserCount = useWebSocketStore((state) => state.setUserCount);
   const addMessage = useWebSocketStore((state) => state.addMessage);
   const clearMessages = useWebSocketStore((state) => state.clearMessages);
@@ -17,7 +18,11 @@ const useCustomWebSocket = () => {
   // Send login event to the server
   useEffect(() => {
     if (readyState === WebSocket.OPEN && username) {
-      sendJsonMessage({ type: "login", session_id: username });
+      sendJsonMessage({
+        type: "login",
+        session_id: username,
+        personality: personality,
+      });
     }
   }, [readyState, username]);
 
