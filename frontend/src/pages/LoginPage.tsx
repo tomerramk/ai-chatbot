@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Form from "@radix-ui/react-form";
-import useWebSocketStore from "../stores/useWebSocketStore";
-import { useWebSocketContext } from "../hooks/webSocketContext";
-import useLocalStorage from "../hooks/useLocalStorage";
+import useWebSocketStore from "@stores/useWebSocketStore";
+import { useWebSocketContext } from "@hooks/webSocketContext";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const LoginPage = () => {
   const [storedUsername, setStoredUsername] = useLocalStorage("username");
@@ -18,13 +18,14 @@ const LoginPage = () => {
   const { lastMessage } = useWebSocketContext();
   const [duplicateName, setDuplicateName] = useState(false);
 
+  // Localstorage support
   useEffect(() => {
     if (storedUsername) {
       setUsername(storedUsername);
     }
   }, [storedUsername, setUsername]);
 
-  /** Login */
+  // Login
   useEffect(() => {
     if (!lastMessage) return;
 
@@ -39,7 +40,10 @@ const LoginPage = () => {
     }
   }, [lastMessage]);
 
-  /** Connect to socket using 'useWebSocketStore' hook */
+  /**
+   * Connect to socket using 'useWebSocketStore' hook
+   * @param event
+   */
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if ((!username && !storedUsername) || !port) return;
@@ -51,12 +55,12 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-grow items-center justify-center pb-28 bg-teal-50 text-gray-800">
-      <div className="space-y-4 w-80 md:w-96 bg-teal-200 p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl mb-4 font-bold text-teal-800">Login</h1>
+      <div className="space-y-4 w-80 md:w-96 bg-white shadow-md border-teal-100 p-6 rounded-lg">
+        <h1 className="text-2xl mb-4 font-bold text-teal-600">Login</h1>
         <Form.Root className="space-y-4" onSubmit={handleSubmit}>
           <Form.Field className="grid" name="name">
             <div className="flex justify-between items-baseline">
-              <Form.Label className="mb-1 font-medium text-teal-700">
+              <Form.Label className="mb-1 font-medium text-teal-600">
                 Name
               </Form.Label>
               <Form.Message
@@ -88,7 +92,7 @@ const LoginPage = () => {
 
           <Form.Field className="grid" name="port">
             <div className="flex justify-between items-baseline">
-              <Form.Label className="mb-1 font-medium text-teal-700">
+              <Form.Label className="mb-1 font-medium text-teal-600">
                 Port
               </Form.Label>
               <Form.Message

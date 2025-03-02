@@ -1,30 +1,42 @@
 import { useRef, useState, useEffect } from "react";
 import * as Form from "@radix-ui/react-form";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
-import useWebSocketStore from "../stores/useWebSocketStore";
-import { useWebSocketContext } from "../hooks/webSocketContext";
+import useWebSocketStore, { Message } from "@stores/useWebSocketStore";
+import { useWebSocketContext } from "@/hooks/webSocketContext";
 import { useNavigate } from "react-router-dom";
 
 const ChatPage = () => {
-  const [messages, setMessages] = useState<
-    { text: string; sender: "user" | "ai" }[]
-  >([]);
   const [input, setInput] = useState("");
+  const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const username = useWebSocketStore((state) => state.username);
+  const messages = useWebSocketStore((state) => state.messages);
   const userCount = useWebSocketStore((state) => state.userCount);
+  const addMessage = useWebSocketStore((state) => state.addMessage);
 
-  const { readyState, disconnect } = useWebSocketContext();
+  const { readyState, sendMessage, disconnect } = useWebSocketContext();
 
   const connected = readyState === WebSocket.OPEN;
 
   const navigate = useNavigate();
 
+  // Check if user has sent any messages
+  useEffect(() => {
+    const userMessages = messages.filter(
+      (msg) => msg.type === "chat" && msg.sender === "user"
+    );
+    if (userMessages.length > 0 && !hasUserInteracted) {
+      setHasUserInteracted(true);
+    }
+  }, [messages, hasUserInteracted]);
+
+  // Redirect to Login page on socket disconnect
   useEffect(() => {
     if (readyState !== WebSocket.OPEN) {
       navigate("/");
     }
-  }, [readyState]);
+  }, [readyState, navigate]);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -34,11 +46,52 @@ const ChatPage = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (input.trim() && connected) {
-      setMessages([...messages, { text: input, sender: "user" }]);
+      addMessage({
+        type: "chat",
+        username: username,
+        text: input,
+        sender: "user",
+      });
+      sendMessage(input);
       setInput("");
-      // Here you would send the message via WebSocket
     }
   };
+
+  // Function to render different message types
+  const renderMessage = (msg: Message, index: number) => {
+    if (msg.type === "alert") {
+      return (
+        <div key={index} className="flex  justify-center my-2">
+          <div className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-medium">
+            <span className="font-semibold">{msg.username}</span>
+            {msg.action === "login" ? " joined" : " left"}
+            <span className="ml-1 text-teal-600">{msg.timestamp}</span>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div
+          key={index}
+          className={`p-3 rounded-lg max-w-[80%] ${
+            msg.sender === "user"
+              ? "bg-teal-600 text-white ml-auto"
+              : "bg-teal-200 text-teal-900 mr-auto"
+          }`}
+        >
+          {msg.text}
+        </div>
+      );
+    }
+  };
+
+  // Get only alerts if user hasn't interacted yet
+  const userAlerts = !hasUserInteracted
+    ? messages.filter((msg) => msg.type === "alert")
+    : [];
+
+  // Get all messages if user has interacted
+  const chatMessages = hasUserInteracted ? messages : [];
 
   return (
     <div className="flex flex-col w-full bg-teal-50 text-gray-800">
@@ -47,7 +100,7 @@ const ChatPage = () => {
           {userCount > 1 ? (
             <>
               <div className="w-3 h-3 rounded-full mr-2 bg-teal-600 animate-pulse" />
-              <span className="font-medium">{`${userCount > 1 ? `${userCount} users using AI Chat` : ``}`}</span>
+              <span className="font-medium">{`${userCount} users using AI Chat`}</span>
             </>
           ) : null}
         </div>
@@ -67,27 +120,26 @@ const ChatPage = () => {
       <ScrollArea.Root className="flex-1 w-full overflow-hidden">
         <ScrollArea.Viewport className="w-full h-full">
           <div className="p-4 space-y-4 pb-24">
-            {/* Added padding at bottom for input form */}
-            {messages.length === 0 && (
-              <div className="text-center text-teal-600 py-10">
-                <p className="text-2xl">Welcome to the chat!</p>
-                <p className="text-lg mt-2">
-                  Start a conversation by sending a message below.
-                </p>
+            {!hasUserInteracted && (
+              <div className="text-center text-teal-600 py-8">
+                <div className="mx-auto rounded-xl p-5 mb-6 max-w-md">
+                  <p className="text-2xl font-semibold mb-3">
+                    Welcome to AI Chat!
+                  </p>
+                  <p className="text-lg text-teal-600">
+                    Start a conversation by sending a message below.
+                  </p>
+                </div>
+
+                {userAlerts.length > 0 && (
+                  <div className="space-y-2 mt-4">
+                    {userAlerts.map((msg, i) => renderMessage(msg, i))}
+                  </div>
+                )}
               </div>
             )}
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={`p-3 rounded-lg max-w-[80%] ${
-                  msg.sender === "user"
-                    ? "bg-teal-600 text-white ml-auto"
-                    : "bg-teal-200 text-teal-900 mr-auto"
-                }`}
-              >
-                {msg.text}
-              </div>
-            ))}
+
+            {chatMessages.map((msg, i) => renderMessage(msg, i))}
             <div ref={messagesEndRef} />
           </div>
         </ScrollArea.Viewport>

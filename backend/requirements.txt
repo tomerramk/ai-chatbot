@@ -4,3 +4,4 @@ websockets
 torch
 transformers
 python-dotenv
+pytz
