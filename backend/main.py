@@ -1,8 +1,9 @@
+import os
 import asyncio
 import json
 import websockets
-# from models import chatbot
-# from config import PERSONALITIES
+from models import chatbot
+from config import PERSONALITIES
 import datetime
 import pytz
 from logger import logger
@@ -15,7 +16,6 @@ sessions = {}
 def get_timestamp():
     """Returns the current UTC timestamp in ISO format with timezone awareness."""
     return datetime.datetime.now(ISRAEL_TZ).isoformat()
-
 
 async def handle_client(websocket):
     session_id = None  # Track the username for this session
@@ -42,8 +42,9 @@ async def handle_client(websocket):
 
         # Add username to sessions
         sessions[session_id] = websocket
-        await websocket.send(json.dumps({"type": "success", "message": "Login successfull", "timestamp": get_timestamp()}))
-        logger.info(f"Server sent to {session_id}: {json.dumps({"type": "success", "message": "Login successfull", "timestamp": get_timestamp()})}")
+        response_data={"type": "success", "message": "Login successfull", "timestamp": get_timestamp()}
+        await websocket.send(json.dumps(response_data))
+        logger.info(f"Server sent to {session_id}: {response_data}")
         await broadcast_event("login", session_id)
 
         while True:
@@ -51,8 +52,15 @@ async def handle_client(websocket):
                 message = await websocket.recv()
                 logger.info(f"Client {session_id} sent: {message}")
 
-                # Echo the message back to the client
-                await websocket.send(json.dumps({"response": f"You said: {message}"}))
+                data=json.loads(message)
+                if data.get("type") == "disconnect":
+                    break  # Exit the loop when user explicitly disconnects
+
+                if data.get("type") == "chat":
+                    response = chatbot.generate_response(message)
+                    response_data = {"type": "ai_response", "message": response, "timetamp": get_timestamp()}
+                    await websocket.send(json.dumps(response_data))
+                    logger.info(f"Server sent to {session_id}: {json.dumps(response_data)}")
 
             except (websockets.exceptions.ConnectionClosed, asyncio.CancelledError) as e:
                 logger.info(f"Client '{session_id}' disconnected")
@@ -67,7 +75,6 @@ async def handle_client(websocket):
         if session_id and sessions.get(session_id) == websocket:
             del sessions[session_id]
             await broadcast_event("disconnect", session_id)
-
 
 async def broadcast_event(event_type, username):
     """Broadcasts a user connection/disconnection event along with the updated count."""
@@ -84,9 +91,10 @@ async def broadcast_event(event_type, username):
     if sessions:
         await asyncio.gather(*(session.send(message) for session in sessions.values()))
 
-
 async def main():
-    host, port = "localhost", 8000
+    host = "localhost"
+    port = int(os.getenv("PORT", 8000))
+
     async with websockets.serve(handle_client, host, port):
         logger.info(f"WebSocket server listening on ws://{host}:{port}")
         await asyncio.Future()

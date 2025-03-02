@@ -38,6 +38,16 @@ const useCustomWebSocket = () => {
         });
       }
     }
+
+    if (data.type === "ai_response" && data.message) {
+      addMessage({
+        type: "chat",
+        username: null,
+        message: data.message,
+        sender: "ai",
+        timestamp: formatTimestamp(data.timestamp),
+      });
+    }
   }, [lastMessage]);
 
   // Send message

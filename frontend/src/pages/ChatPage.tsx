@@ -49,8 +49,9 @@ const ChatPage = () => {
       addMessage({
         type: "chat",
         username: username,
-        text: input,
+        message: input,
         sender: "user",
+        timestamp: new Date().toLocaleDateString(),
       });
       sendMessage(input);
       setInput("");
@@ -79,7 +80,7 @@ const ChatPage = () => {
               : "bg-teal-200 text-teal-900 mr-auto"
           }`}
         >
-          {msg.text}
+          {msg.message}
         </div>
       );
     }

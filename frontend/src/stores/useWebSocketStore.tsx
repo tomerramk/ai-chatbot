@@ -4,8 +4,9 @@ export type Message =
   | {
       type: "chat";
       username: string | null;
-      text: string;
+      message: string;
       sender: "user" | "ai";
+      timestamp: string;
     }
   | {
       type: "alert";
