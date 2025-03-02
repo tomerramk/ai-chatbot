@@ -1,11 +1,10 @@
 import { CheckIcon } from "@radix-ui/react-icons";
 import * as Select from "@radix-ui/react-select";
 
-// Helper component for Select items with TypeScript typing
-interface SelectItemProps {
+type SelectItemProps = {
   children: React.ReactNode;
   value: string;
-}
+};
 
 const SelectItem: React.FC<SelectItemProps> = ({ children, value }) => {
   return (

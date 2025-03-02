@@ -7,13 +7,6 @@ const Layout = () => {
         <div className="flex items-center">
           <h1 className="text-xl font-bold">AI Chatroom</h1>
         </div>
-        <nav>
-          <ul className="flex space-x-6">
-            <li className="hover:text-teal-200 transition-colors duration-200 cursor-pointer">
-              About
-            </li>
-          </ul>
-        </nav>
       </header>
       <main className="flex h-full min-h-0 flex-grow">
         <Outlet />

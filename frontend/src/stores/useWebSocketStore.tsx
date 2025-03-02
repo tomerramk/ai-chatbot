@@ -16,8 +16,12 @@ export type Message =
     };
 
 interface WebSocketStore {
+  port: string | null;
+  setPort: (port: string | null) => void;
   username: string | null;
   setUsername: (username: string | null) => void;
+  duplicateUsername: boolean;
+  setDuplicateUsername: (duplicateUsername: boolean) => void;
   personality: string;
   setPersonality: (personality: string) => void;
   socketUrl: string;
@@ -29,8 +33,12 @@ interface WebSocketStore {
   clearMessages: () => void;
 }
 const useWebSocketStore = create<WebSocketStore>((set) => ({
+  port: null,
+  setPort: (port) => set({ port }),
   username: null,
   setUsername: (username) => set({ username }),
+  duplicateUsername: false,
+  setDuplicateUsername: (duplicateUsername) => set({ duplicateUsername }),
   personality: "default",
   setPersonality: (personality) => set({ personality }),
   socketUrl: "",
