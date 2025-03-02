@@ -67,7 +67,7 @@ class ChatbotModel:
 
         # Add current prompt
         full_prompt = f"{system_message}\n\nUser: {prompt}\nAssistant:"
-        
+
         # Tokenize the prompt
         inputs = self.tokenizer(full_prompt, return_tensors="pt").to(self.model.device)
         
@@ -85,9 +85,8 @@ class ChatbotModel:
         # Decode the response and clean it up
         response_ids = output[0][inputs["input_ids"].shape[1]:]
         response = self.tokenizer.decode(response_ids, skip_special_tokens=True).strip()
+
         # Ensure it does not continue generating additional questions
         response = response.split("\nUser:")[0].strip()
         
         return response
-
-chatbot = ChatbotModel()

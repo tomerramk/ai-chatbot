@@ -2,21 +2,13 @@ import os
 import asyncio
 import json
 import websockets
-from models import chatbot
-from config import PERSONALITIES
-import datetime
-import pytz
-from logger import logger
-
-# Define Israel timezone
-ISRAEL_TZ = pytz.timezone("Asia/Jerusalem")
+from workers.ai_queue import message_queue, process_queue
+from config.config import PERSONALITIES
+from utils.time_utils import get_timestamp
+from logs.logger import logger
 
 sessions = {}
 prsonality = ""
-
-def get_timestamp():
-    """Returns the current UTC timestamp in ISO format with timezone awareness."""
-    return datetime.datetime.now(ISRAEL_TZ).isoformat()
 
 async def handle_client(websocket):
     session_id = None  # Track the username for this session
@@ -43,7 +35,7 @@ async def handle_client(websocket):
 
         # Add username to sessions
         sessions[session_id] = websocket
-        prsonality = init_data.get("personality", "default")
+        personality = init_data.get("personality", "default")
         response_data={"type": "success", "message": "Login successfull", "timestamp": get_timestamp()}
         await websocket.send(json.dumps(response_data))
         logger.info(f"Server sent to {session_id}: {response_data}")
@@ -59,10 +51,8 @@ async def handle_client(websocket):
                     break  # Exit the loop when user explicitly disconnects
 
                 if data.get("type") == "chat":
-                    response = chatbot.generate_response(message, persona=prsonality)
-                    response_data = {"type": "ai_response", "message": response, "timestamp": get_timestamp()}
-                    await websocket.send(json.dumps(response_data))
-                    logger.info(f"Server sent to {session_id}: {json.dumps(response_data)}")
+                    # Add message to processing queue
+                    await message_queue.put((session_id, websocket, personality, data["message"])) 
 
             except (websockets.exceptions.ConnectionClosed, asyncio.CancelledError) as e:
                 logger.info(f"Client '{session_id}' disconnected")
@@ -96,6 +86,9 @@ async def broadcast_event(event_type, username):
 async def main():
     host = "localhost"
     port = int(os.getenv("PORT", 8000))
+
+    # Start AI processing worker
+    asyncio.create_task(process_queue())  
 
     async with websockets.serve(handle_client, host, port):
         logger.info(f"WebSocket server listening on ws://{host}:{port}")

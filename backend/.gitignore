@@ -1,4 +1,6 @@
 models/*
+!models/chatbot.py
+!models/__init__.py
 !models/.gitkeep
 __pycache__
 chat_server.log
