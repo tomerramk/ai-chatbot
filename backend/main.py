@@ -52,7 +52,7 @@ async def handle_client(websocket):
 
                 if data.get("type") == "chat":
                     # Add message to processing queue
-                    await message_queue.put((session_id, websocket, personality, data["message"])) 
+                    await message_queue.put((session_id, websocket, data["message"], personality)) 
 
             except (websockets.exceptions.ConnectionClosed, asyncio.CancelledError) as e:
                 logger.info(f"Client '{session_id}' disconnected")

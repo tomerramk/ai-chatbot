@@ -7,13 +7,20 @@ from logs.logger import logger
 # Global AI message queue
 message_queue = asyncio.Queue()
 
+session_histories = {}
+MAX_HISTORY_LENGTH = 20
+
 async def process_queue():
     """Worker task to handle AI responses sequentially."""
     while True:
         session_id, websocket, message, personality = await message_queue.get()
 
         try:
-            response = await asyncio.to_thread(chatbot.generate_response, message, persona=personality)
+            history = session_histories.get(session_id, [])
+
+            response, updated_history = await asyncio.to_thread(chatbot.generate_response, message, conversation_history=history, persona=personality)
+
+            session_histories[session_id] = updated_history[-MAX_HISTORY_LENGTH:]
 
             response_data = {
                 "type": "ai_response",
@@ -23,6 +30,7 @@ async def process_queue():
             
             await websocket.send(json.dumps(response_data))
             logger.info(f"Server sent to {session_id}: {json.dumps(response_data)}")
+
         except Exception as e:
             logger.error(f"Error processing AI response: {e}")
 

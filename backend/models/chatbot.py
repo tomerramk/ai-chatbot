@@ -45,32 +45,26 @@ class ChatbotModel:
         """
         Generate a response from the model given a prompt and optional conversation history and persona.
         
-        Args:
-            prompt (str): The user's input prompt
-            conversation_history (list, optional): List of previous conversation turns as (user, assistant) tuples
-            persona (str, optional): A description of the chatbot's persona/behavior
-            max_new_tokens (int, optional): Maximum number of tokens to generate
-            temperature (float, optional): Controls randomness in generation (0.0-1.0)
-            
         Returns:
-            str: The generated response
+            tuple: (response_text, updated_conversation_history)
         """
-        # Initialize conversation history if None
         if conversation_history is None:
             conversation_history = []
-        
-        # Construct full prompt with optional persona and conversation history
-        full_prompt = ""
-        
+
         # Use the provided persona or default to "You are a helpful assistant."
         system_message = f"System: {persona.strip()}" if persona else "System: You are a helpful assistant."
 
-        # Add current prompt
-        full_prompt = f"{system_message}\n\nUser: {prompt}\nAssistant:"
+        # Construct the full conversation history
+        full_prompt = system_message + "\n\n"
+        for user_msg, assistant_msg in conversation_history:
+            full_prompt += f"User: {user_msg}\nAssistant: {assistant_msg}\n"
 
-        # Tokenize the prompt
-        inputs = self.tokenizer(full_prompt, return_tensors="pt").to(self.model.device)
-        
+        # Add the current user input
+        full_prompt += f"User: {prompt}\nAssistant:"
+
+        # Tokenize the full prompt
+        inputs = self.tokenizer(full_prompt, return_tensors="pt", truncation=True, max_length=4096).to(self.model.device)
+
         # Generate response
         with torch.no_grad():
             output = self.model.generate(
@@ -81,12 +75,15 @@ class ChatbotModel:
                 do_sample=temperature > 0,
                 pad_token_id=self.tokenizer.pad_token_id
             )
-        
+
         # Decode the response and clean it up
         response_ids = output[0][inputs["input_ids"].shape[1]:]
         response = self.tokenizer.decode(response_ids, skip_special_tokens=True).strip()
 
         # Ensure it does not continue generating additional questions
         response = response.split("\nUser:")[0].strip()
-        
-        return response
+
+        conversation_history.append((prompt, response))
+
+        return response, conversation_history  # Return response + updated history
+
