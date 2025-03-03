@@ -5,48 +5,52 @@ import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 const ThemeToggle = () => {
   const [currentTheme, setCurrentTheme] = useState("light");
 
-  const setThemeFromSystemPreference = () => {
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    setCurrentTheme(prefersDark ? "dark" : "light");
+  const getSystemTheme = () => {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  };
+
+  const applyTheme = (theme: string) => {
+    const root = document.documentElement;
+    if (theme === "system") {
+      const systemTheme = getSystemTheme();
+      root.setAttribute("data-theme", systemTheme);
+    } else {
+      root.setAttribute("data-theme", theme);
+    }
   };
 
   const handleChange = (newTheme: string) => {
-    const root = document.documentElement;
-    root.setAttribute("data-theme", newTheme);
     localStorage.setItem("data-theme", newTheme);
     setCurrentTheme(newTheme);
+    applyTheme(newTheme);
   };
 
   useEffect(() => {
-    // Set theme based on system preference or saved setting
     const localStorageTheme = localStorage.getItem("data-theme");
-    const root = document.documentElement;
-    const savedTheme = root.getAttribute("data-theme");
 
     if (localStorageTheme) {
       setCurrentTheme(localStorageTheme);
-      root.setAttribute("data-theme", localStorageTheme);
-    } else if (savedTheme) {
-      setCurrentTheme(savedTheme);
+      applyTheme(localStorageTheme);
     } else {
-      setThemeFromSystemPreference();
+      handleChange("system");
     }
 
-    // Listener for system theme changes
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleSystemThemeChange = () => {
-      if (currentTheme === "system") {
-        setThemeFromSystemPreference();
+      if (localStorage.getItem("data-theme") === "system") {
+        applyTheme("system");
       }
     };
+
     mediaQuery.addEventListener("change", handleSystemThemeChange);
 
     return () => {
       mediaQuery.removeEventListener("change", handleSystemThemeChange);
     };
-  }, [currentTheme]);
+  }, []);
+
   const getThemeIcon = () => {
     if (
       currentTheme === "dark" ||

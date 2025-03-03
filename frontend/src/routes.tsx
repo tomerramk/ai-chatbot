@@ -1,23 +1,25 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 
 import ChatPage from "@pages/ChatPage";
 import LoginPage from "@pages/LoginPage";
 import Layout from "@components/Layout";
+import ErrorPage from "./pages/ErrorPage";
 // import NotFound from "./pages/NotFound";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,
-    // errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         element: <LoginPage />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "/chat",
         element: <ChatPage />,
+        errorElement: <ErrorPage />,
       },
     ],
   },

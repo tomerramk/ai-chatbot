@@ -16,7 +16,6 @@ const LoginPage = () => {
   const setDuplicateName = useWebSocketStore(
     (state) => state.setDuplicateUsername
   );
-
   const { lastMessage } = useWebSocketContext();
 
   // Handle login response
