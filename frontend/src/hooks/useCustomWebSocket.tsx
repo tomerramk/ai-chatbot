@@ -7,6 +7,7 @@ const useCustomWebSocket = () => {
   const socketUrl = useWebSocketStore((state) => state.socketUrl);
   const username = useWebSocketStore((state) => state.username);
   const setUsername = useWebSocketStore((state) => state.setUsername);
+  const setLoading = useWebSocketStore((state) => state.setLoading);
   const personality = useWebSocketStore((state) => state.personality);
   const setUserCount = useWebSocketStore((state) => state.setUserCount);
   const addMessage = useWebSocketStore((state) => state.addMessage);
@@ -45,6 +46,7 @@ const useCustomWebSocket = () => {
     }
 
     if (data.type === "ai_response" && data.message) {
+      setLoading(false);
       addMessage({
         type: "chat",
         username: null,
@@ -59,6 +61,7 @@ const useCustomWebSocket = () => {
   const sendMessage = useCallback(
     (message: string) => {
       if (readyState === WebSocket.OPEN && username) {
+        setLoading(true);
         sendJsonMessage({ type: "chat", session_id: username, message });
       }
     },

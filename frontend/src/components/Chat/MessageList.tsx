@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 const MessageList = () => {
   const messages = useWebSocketStore((state) => state.messages);
+  const loading = useWebSocketStore((state) => state.loading);
 
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -25,6 +26,11 @@ const MessageList = () => {
       setHasUserInteracted(true);
     }
   }, [messages, hasUserInteracted]);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const renderMessage = (msg: Message, index: number) => {
     if (msg.type === "alert") {
@@ -88,6 +94,17 @@ const MessageList = () => {
           )}
 
           {chatMessages.map((msg, i) => renderMessage(msg, i))}
+
+          {loading && (
+            <div className="flex mt-4">
+              <div className="flex items-center space-x-1 p-3 rounded-lg bg-teal-200 text-teal-900 dark:bg-gray-600 dark:text-gray-200 text-sm">
+                <span className="w-2 h-2 bg-current rounded-full animate-bounce" />
+                <span className="w-2 h-2 bg-current rounded-full animate-bounce [animation-delay:150ms]" />
+                <span className="w-2 h-2 bg-current rounded-full animate-bounce [animation-delay:300ms]" />
+              </div>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea.Viewport>

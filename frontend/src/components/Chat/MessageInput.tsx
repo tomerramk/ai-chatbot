@@ -6,6 +6,7 @@ import { useState } from "react";
 const MessageInput = () => {
   const username = useWebSocketStore((state) => state.username);
   const addMessage = useWebSocketStore((state) => state.addMessage);
+  const loading = useWebSocketStore((state) => state.loading);
 
   const { readyState, sendMessage } = useWebSocketContext();
 
@@ -33,7 +34,7 @@ const MessageInput = () => {
 
   return (
     <Form.Root
-      className="p-4 w-full bg-white border-t border-teal-200 dark:bg-gray-800 dark:border-gray-700"
+      className="fixed bottom-0 p-3 w-full bg-white border-t border-teal-200 dark:bg-gray-800 dark:border-gray-700"
       onSubmit={handleSubmit}
     >
       <div className="flex max-w-2xl mx-auto">
@@ -51,7 +52,7 @@ const MessageInput = () => {
         <Form.Submit asChild>
           <button
             className="px-6 py-3 hover:cursor-pointer bg-teal-600 text-white rounded-r-lg font-medium hover:bg-teal-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!connected || !input.trim()}
+            disabled={!connected || !input.trim() || loading}
           >
             Send
           </button>

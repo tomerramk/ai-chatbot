@@ -22,6 +22,8 @@ interface WebSocketStore {
   setUsername: (username: string | null) => void;
   duplicateUsername: boolean;
   setDuplicateUsername: (duplicateUsername: boolean) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
   personality: string;
   setPersonality: (personality: string) => void;
   socketUrl: string;
@@ -39,6 +41,8 @@ const useWebSocketStore = create<WebSocketStore>((set) => ({
   setUsername: (username) => set({ username }),
   duplicateUsername: false,
   setDuplicateUsername: (duplicateUsername) => set({ duplicateUsername }),
+  loading: false,
+  setLoading: (loading) => set({ loading }),
   personality: "default",
   setPersonality: (personality) => set({ personality }),
   socketUrl: "",
