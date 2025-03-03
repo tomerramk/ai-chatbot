@@ -46,9 +46,11 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-grow items-center justify-center pb-28 bg-teal-50 text-gray-800">
-      <div className="space-y-4 w-80 md:w-96 bg-white shadow-md border-teal-100 p-6 rounded-lg">
-        <h1 className="text-2xl mb-4 font-bold text-teal-600">Login</h1>
+    <div className="flex flex-grow items-center justify-center pb-28 bg-teal-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+      <div className="space-y-4 w-80 md:w-96 bg-white dark:bg-gray-800 shadow-md border-teal-100 dark:border-gray-700 p-6 rounded-lg">
+        <h1 className="text-2xl mb-4 font-bold text-teal-600 dark:text-teal-400">
+          Login
+        </h1>
         <Form.Root className="space-y-4" onSubmit={handleSubmit}>
           <UsernameInput />
           <PortInput />

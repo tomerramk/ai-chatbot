@@ -34,22 +34,24 @@ const UsernameInput = () => {
   return (
     <Form.Field className="grid" name="name">
       <div className="flex justify-between items-baseline">
-        <Form.Label className="mb-1 font-medium text-teal-600">Name</Form.Label>
+        <Form.Label className="mb-1 font-medium text-teal-600 dark:text-teal-400">
+          Name
+        </Form.Label>
         <Form.Message
-          className="text-[12px] font-medium text-teal-800 opacity-90"
+          className="text-[12px] font-medium text-teal-800 dark:text-teal-300 opacity-90"
           match={"valueMissing"}
         >
           Please enter a name
         </Form.Message>
         {duplicateName && (
-          <Form.Message className="text-[12px] font-medium text-teal-800 opacity-90">
+          <Form.Message className="text-[12px] font-medium text-teal-800 dark:text-teal-300 opacity-90">
             Username already taken
           </Form.Message>
         )}
       </div>
       <Form.Control asChild>
         <input
-          className="p-2 border-[1.5px] border-teal-300 rounded-lg bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="p-2 border-[1.5px] border-teal-300 dark:border-teal-600 rounded-lg bg-teal-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           placeholder="Enter your name"
           value={username || ""}
           onChange={(e) => {

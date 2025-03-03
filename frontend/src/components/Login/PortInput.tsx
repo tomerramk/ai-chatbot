@@ -18,7 +18,9 @@ const PortInput = () => {
   return (
     <Form.Field className="grid" name="port">
       <div className="flex justify-between items-baseline">
-        <Form.Label className="mb-1 font-medium text-teal-600">Port</Form.Label>
+        <Form.Label className="mb-1 font-medium text-teal-600 dark:text-teal-400">
+          Port
+        </Form.Label>
         <Form.Message
           className="text-[12px] font-medium text-teal-800 opacity-90"
           match="valueMissing"
@@ -36,7 +38,7 @@ const PortInput = () => {
         <input
           type="number"
           inputMode="numeric"
-          className="p-2 border-[1.5px] bg-teal-50 border-teal-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+          className="p-2 border-[1.5px] bg-teal-50 dark:bg-gray-700 border-teal-300 dark:border-teal-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
           placeholder="Enter port number"
           value={port || ""}
           onChange={(e) => {
