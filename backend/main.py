@@ -2,8 +2,12 @@ import os
 import asyncio
 import json
 import websockets
-from workers.ai_queue import message_queue, process_queue
-from config.config import PERSONALITIES
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from workers.ai_queue import message_queue, process_queue, session_histories
 from utils.time_utils import get_timestamp
 from logs.logger import logger
 
@@ -63,9 +67,13 @@ async def handle_client(websocket):
     except Exception as e:
         logger.error(f"Error handling client: {e}")
     finally:
-        # Remove the user from active users on disconnect
-        if session_id and sessions.get(session_id) == websocket:
-            del sessions[session_id]
+        if session_id:
+            # Remove the user from active users on disconnect
+            if sessions.get(session_id) == websocket:
+                del sessions[session_id]
+
+            session_histories.pop(session_id, None)
+
             await broadcast_event("disconnect", session_id)
 
 async def broadcast_event(event_type, username):
@@ -85,7 +93,7 @@ async def broadcast_event(event_type, username):
 
 async def main():
     host = "localhost"
-    port = int(os.getenv("PORT", 8000))
+    port = int(os.getenv("PORT"))
 
     # Start AI processing worker
     asyncio.create_task(process_queue())  

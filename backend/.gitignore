@@ -4,3 +4,5 @@ models/*
 !models/.gitkeep
 __pycache__
 chat_server.log
+build
+dist

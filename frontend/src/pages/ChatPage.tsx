@@ -7,6 +7,7 @@ import Header from "@/components/Chat/ChatHeader";
 import MessageList from "@/components/Chat/MessageList";
 
 const ChatPage = () => {
+  const setLoading = useWebSocketStore((state) => state.setLoading);
   const clearMessages = useWebSocketStore((state) => state.clearMessages);
 
   const { readyState } = useWebSocketContext();
@@ -17,6 +18,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (readyState !== WebSocket.OPEN) {
       navigate("/");
+      setLoading(false);
       clearMessages();
     }
   }, [readyState, navigate]);

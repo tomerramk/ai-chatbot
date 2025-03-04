@@ -1,6 +1,7 @@
-uvicorn
 websockets
 torch
 transformers
+pyarmor
+pyinstaller
 python-dotenv
 pytz

@@ -1,45 +1,54 @@
 import os
+import sys
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
+from config.config import PERSONALITIES
 
-# Read model name from environment variable
-MODEL_NAME = os.getenv("MODEL_NAME", "mistralai/Mistral-7B-Instruct-v0.2")  # Default to Mistral 7B
-LOCAL_MODEL_PATH = f"models/{MODEL_NAME.split('/')[-1]}"  # Save model locally
+# Check if running as a PyInstaller executable
+IS_EXE = hasattr(sys, "_MEIPASS")
 
 class ChatbotModel:
     def __init__(self):
-        """Load model locally; download if missing"""
+        """Handle model loading differently based on execution mode"""
 
-        if not os.path.exists(LOCAL_MODEL_PATH):
-            print(f"Downloading model: {MODEL_NAME} ...")
-            self.download_model()
+        if IS_EXE:
+            # Running as an EXE – prompt for model name and access token
+            self.model_name = input("Enter the model name (e.g., mistralai/Mistral-7B-Instruct-v0.2): ").strip()
+            access_token = input("Enter your Hugging Face access token: ").strip()
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=access_token)
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_name, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32, token=access_token
+            )
         else:
-            print(f"Loading model from: {LOCAL_MODEL_PATH}")
+            # Running normally – check backend/models and download if missing
+            self.model_name = os.getenv("MODEL_NAME")
+            if not self.model_name:
+                self.model_name = input("Enter the model name (e.g., mistralai/Mistral-7B-Instruct-v0.2): ").strip()
 
-        # Load tokenizer & model from local storage
-        self.tokenizer = AutoTokenizer.from_pretrained(LOCAL_MODEL_PATH)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            LOCAL_MODEL_PATH, torch_dtype=torch.float16, device_map="auto"
-        )
+            self.local_model_path = f"models/{self.model_name.split('/')[-1]}"
 
-        # Set padding token to EOS if missing
-        if self.tokenizer.pad_token is None:
-            self.tokenizer.pad_token = self.tokenizer.eos_token  # Use EOS as padding token
+            if not os.path.exists(self.local_model_path):
+                print(f"Downloading model: {self.model_name} ...")
+                self.download_model()
+            else:
+                print(f"Loading model from: {self.local_model_path}")
 
+            # Load tokenizer & model from local storage
+            self.tokenizer = AutoTokenizer.from_pretrained(self.local_model_path)
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.local_model_path, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
+            )
 
     def download_model(self):
         """Download and save the model locally"""
-
-        os.makedirs(LOCAL_MODEL_PATH, exist_ok=True)
-
-        tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-        model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
+        os.makedirs(self.local_model_path, exist_ok=True)
+        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        model = AutoModelForCausalLM.from_pretrained(self.model_name, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
         
-        tokenizer.save_pretrained(LOCAL_MODEL_PATH)
-        model.save_pretrained(LOCAL_MODEL_PATH)
+        tokenizer.save_pretrained(self.local_model_path)
+        model.save_pretrained(self.local_model_path)
 
-        print(f"Model saved at: {LOCAL_MODEL_PATH}")
-
+        print(f"Model saved at: {self.local_model_path}")
 
     def generate_response(self, prompt, conversation_history=None, persona=None, max_new_tokens=512, temperature=0.7):
         """
@@ -52,7 +61,7 @@ class ChatbotModel:
             conversation_history = []
 
         # Use the provided persona or default to "You are a helpful assistant."
-        system_message = f"System: {persona.strip()}" if persona else "System: You are a helpful assistant."
+        system_message = f"System: {PERSONALITIES.get(persona, PERSONALITIES['default'])}"
 
         # Construct the full conversation history
         full_prompt = system_message + "\n\n"
