@@ -55,7 +55,7 @@ const LoginPage = () => {
           <PortInput />
           <PersonalitySelect />
           <Form.Submit asChild>
-            <button className="p-3 w-full font-semibold bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors duration-200 mt-2">
+            <button className="p-3 w-full font-semibold hover:cursor-pointer bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors duration-200 mt-2">
               Join Chat
             </button>
           </Form.Submit>

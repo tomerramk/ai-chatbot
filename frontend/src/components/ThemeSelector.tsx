@@ -70,19 +70,19 @@ const ThemeToggle = () => {
       </DropdownMenu.Trigger>
       <DropdownMenu.Content className="z-10 ml-2 mt-1 w-28 overflow-hidden rounded-lg bg-teal-50 dark:bg-gray-800 text-black dark:text-white p-1.5 shadow-lg outline-none">
         <DropdownMenu.Item
-          className="cursor-pointer rounded-md p-2 outline-none hover:bg-teal-500 dark:hover:bg-teal-700"
+          className="cursor-pointer rounded-md p-2 outline-none hover:text-white hover:bg-teal-500 dark:hover:bg-teal-700"
           onSelect={() => handleChange("light")}
         >
           Light
         </DropdownMenu.Item>
         <DropdownMenu.Item
-          className="cursor-pointer rounded-md p-2 outline-none hover:bg-teal-500 dark:hover:bg-teal-700"
+          className="cursor-pointer rounded-md p-2 outline-none hover:text-white hover:bg-teal-500 dark:hover:bg-teal-700"
           onSelect={() => handleChange("dark")}
         >
           Dark
         </DropdownMenu.Item>
         <DropdownMenu.Item
-          className="cursor-pointer rounded-md p-2 outline-none hover:bg-teal-500 dark:hover:bg-teal-700"
+          className="cursor-pointer rounded-md p-2 outline-none hover:text-white hover:bg-teal-500 dark:hover:bg-teal-700"
           onSelect={() => handleChange("system")}
         >
           System
