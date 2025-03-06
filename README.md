@@ -28,7 +28,7 @@ Supports downloading and changing models using [Hugging Face](https://huggingfac
     \*\* Models are downloaded locally for quick successive launches.
     ![Server Model](docs/screenshots/server-model.png)
 
-  - **Server Logs** - The Server logs all user interactions in terminal and into File [(docs/example-logs)](example-logs.txt).
+  - **Server Logs** - The Server logs all user interactions in terminal and into File [(docs/example-logs)](docs/example-logs.txt).
     ![Server Logs](docs/screenshots/server-logs.png)
 
 ## Prerequisites
@@ -84,7 +84,7 @@ Supports downloading and changing models using [Hugging Face](https://huggingfac
     ```pwsh
      pyinstaller --name server --hidden-import=asyncio --hidden-import=websockets --hidden-import=dotenv --hidden-import=transformers --hidden-import=pytz --add-data config/*.py:config --add-data logs/*.py:logs --add-data models/*.py:models --add-data utils/*.py:utils --add-data workers/*.py:workers main.py
     ```
-    *(`--onefile` flag works too but due to the very big transformers library the exe becomes over 2GB)  
+    *(`--onefile` flag works too but due to the transformers library the created exe is over 2GB)  
     The `server.exe` will be available under `backend/dist/dist`.
 
 ## Frontend (Vite + React)
