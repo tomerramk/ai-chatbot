@@ -4,20 +4,37 @@ AI Chatroom is a real-time chat application with support for multiple AI persona
 
 ## Features
 
-- **Custom AI models** - Supports choosing different AI models.
-- **Websocket backend** - Real-time messaging via sockets
-- **Multiple AI presonalities** - Users can select different AI personas.
-- **Conversation history** - The AI respondes according to previous messages in session.
-- **User count** - Displays the number of connected users using the chat.
-- **Dark/Light mode**
+- **Login Page:**
+
+  - **Username and Port** - Supports username input and server port selection.
+  - **Multiple AI personalities** - Select different AI personas.
+
+  ![Login Page](docs/screenshots/login-page.png)
+
+- **Real-Time AI Chat:**
+
+  - **Conversation history** - AI adapts to previous messages in the session.
+  - **User count & Alerts** - Displays number of connected users and alerts on user login/disconnect.
+  - **Dark/Light mode**
+
+  ![Chat Example 1](docs/screenshots/chat-1.png)
+  ![Chat Example 2](docs/screenshots/chat-2.png)
+
+- **Websocket Server**:
+
+  - **Custom AI models** - Choose from different AI models by entering their name ([Hugging Face](https://huggingface.co/models) format).  
+    \* For gated models enter access token, otherwise leave empty  
+    \*\* Models are downloaded locally for quick successive launches.
+    ![Server Model](docs/screenshots/server-model.png)
+
+  - **Server Logs** - The Server logs all user interactions in terminal and into File [(docs/example-logs)](example-logs.txt).
+    ![Server Logs](docs/screenshots/server-logs.png)
 
 ## Prerequisites
 
 - Python 3.10 or above
 - Npm
 - Node.js
-
-## Getting Started
 
 ## Installation
 
@@ -40,7 +57,7 @@ AI Chatroom is a real-time chat application with support for multiple AI persona
 
 ### Building Executable
 
-(Takes around 5 minutes)
+(Takes a few minutes)
 
 1.  Navigate to the backend directory
 
@@ -60,11 +77,12 @@ AI Chatroom is a real-time chat application with support for multiple AI persona
     cd dist
     ```
 
-4.  Package with pyinstaller
+4.  Package with pyinstaller  
+    (`--onefile` flag works but due to the very big transformers library the exe becomes over 2GB)
     ```pwsh
-     pyinstaller --onefile --name server --hidden-import=asyncio --hidden-import=websockets --hidden-import=dotenv --hidden-import=transformers --hidden-import=pytz
-    --add-data config/*.py:config --add-data logs/*.py:logs --add-data models/*.py:models --add-data utils/*.py:utils --add-data workers/*.py:workers main.py
+     pyinstaller --name server --hidden-import=asyncio --hidden-import=websockets --hidden-import=dotenv --hidden-import=transformers --hidden-import=pytz --add-data config/*.py:config --add-data logs/*.py:logs --add-data models/*.py:models --add-data utils/*.py:utils --add-data workers/*.py:workers main.py
     ```
+    The `server.exe` will be available under `backend/dist/dist`.
 
 ### Making Changes
 

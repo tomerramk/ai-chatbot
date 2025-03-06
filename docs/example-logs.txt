@@ -1,0 +1,17 @@
+2025-03-06 18:38:22,324 - INFO - WebSocket server listening on ws://localhost:8000
+2025-03-06 18:41:55,579 - INFO - New client sent: {"type":"login","session_id":"Tomer","personality":"default"}
+2025-03-06 18:41:55,580 - INFO - Server sent to Tomer: {'type': 'success', 'message': 'Login successfull', 'timestamp': '2025-03-06T18:41:55.580037+02:00'}
+2025-03-06 18:41:55,580 - INFO - Broadcast: {"type": "login", "username": "Tomer", "count": 1, "timestamp": "2025-03-06T18:41:55.580256+02:00"}
+2025-03-06 18:41:57,973 - INFO - New client sent: {"type":"login","session_id":"Notch","personality":"formal"}
+2025-03-06 18:41:57,974 - INFO - Server sent to Notch: {'type': 'success', 'message': 'Login successfull', 'timestamp': '2025-03-06T18:41:57.974253+02:00'}
+2025-03-06 18:41:57,974 - INFO - Broadcast: {"type": "login", "username": "Notch", "count": 2, "timestamp": "2025-03-06T18:41:57.974724+02:00"}
+2025-03-06 18:42:08,205 - INFO - Client Tomer sent: {"type":"chat","session_id":"Tomer","message":"How much is 1+1?"}
+2025-03-06 18:42:13,049 - INFO - Client Notch sent: {"type":"chat","session_id":"Notch","message":"How much is 2+2?"}
+2025-03-06 18:42:15,658 - INFO - Server sent to Tomer: {"type": "ai_response", "message": "The answer to 1 plus 1 is 2. Is there anything else I can help you with?", "timestamp": "2025-03-06T18:42:15.658753+02:00"}
+2025-03-06 18:42:29,224 - INFO - Server sent to Notch: {"type": "ai_response", "message": "The answer to the sum of 2 and 2 is 4. Is there any specific context or problem you'd like me to apply this to? I'm here to help answer any question you might have.", "timestamp": "2025-03-06T18:42:29.224545+02:00"}
+2025-03-06 18:43:00,157 - INFO - Client Tomer sent: {"type":"chat","session_id":"Tomer","message":"How much is 4+4?"}
+2025-03-06 18:43:07,938 - INFO - Client Notch sent: {"type":"disconnect","session_id":"Notch"}
+2025-03-06 18:43:07,938 - INFO - Broadcast: {"type": "disconnect", "username": "Notch", "count": 1, "timestamp": "2025-03-06T18:43:07.938610+02:00"}
+2025-03-06 18:45:42,956 - INFO - Server sent to Tomer: {"type": "ai_response", "message": "The sum of 4 plus 4 is 8. Is there another mathematical problem I can help you with?", "timestamp": "2025-03-06T18:45:42.956505+02:00"}
+2025-03-06 18:46:38,620 - INFO - Client Tomer sent: {"type":"disconnect","session_id":"Tomer"}
+2025-03-06 18:46:38,621 - INFO - Broadcast: {"type": "disconnect", "username": "Tomer", "count": 0, "timestamp": "2025-03-06T18:46:38.621144+02:00"}

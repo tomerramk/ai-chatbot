@@ -6,7 +6,8 @@ from utils.get_arg_value import get_arg_value
 
 class ChatbotModel:
     def __init__(self):
-        """Handle model loading differently based on execution mode"""
+        """Handle model loading"""
+
         self.model_name = get_arg_value('model', "Enter the model name (e.g., mistralai/Mistral-7B-Instruct-v0.2): ", "MODEL_NAME").strip()
         access_token = get_arg_value('token', "Enter your Hugging Face access token: ", "HF_ACCESS_TOKEN").strip()
 
