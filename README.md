@@ -1,7 +1,10 @@
 # AI Chatrooom
 
 AI Chatroom is an AI-powered real-time chatroom application with support for multiple AI personalities, powered by a Python websockets server and a Vite-based React frontend.  
-Supports downloading and changing models using [Hugging Face](https://huggingface.co/models).
+
+Supports downloading and changing models using [**Hugging Face**](https://huggingface.co/models).  
+For models like `mistralai/Mistral-7B-Instruct-v0.2` a hugging face [**access token**](https://huggingface.co/settings/tokens) is required, along with access (usually by accepting terms at the model page).  
+Enter the model name and access token when prompted by the server.
 
 ## Features
 

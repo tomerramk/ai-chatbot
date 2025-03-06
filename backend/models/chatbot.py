@@ -9,7 +9,7 @@ class ChatbotModel:
         """Handle model loading"""
 
         self.model_name = get_arg_value('model', "Enter the model name (e.g., mistralai/Mistral-7B-Instruct-v0.2): ", "MODEL_NAME").strip()
-        access_token = get_arg_value('token', "Enter your Hugging Face access token: ", "HF_ACCESS_TOKEN").strip()
+        self.access_token = get_arg_value('token', "Enter your Hugging Face access token: ", "HF_ACCESS_TOKEN").strip()
 
         self.local_model_path = f"models/{self.model_name.split('/')[-1]}"
 
@@ -19,18 +19,20 @@ class ChatbotModel:
         else:
             print(f"Loading model from: {self.local_model_path}")
 
-        # Load tokenizer & model
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=access_token)
+        # Load tokenizer and model from the local cache
+        self.tokenizer = AutoTokenizer.from_pretrained(self.local_model_path, token=self.access_token, cache_dir=self.local_model_path)
         self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32, token=access_token
+            self.local_model_path, token=self.access_token, cache_dir=self.local_model_path, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
         )
 
     def download_model(self):
         """Download and save the model locally"""
 
         os.makedirs(self.local_model_path, exist_ok=True)
-        tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        model = AutoModelForCausalLM.from_pretrained(self.model_name, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
+
+        # Download tokenizer and model
+        tokenizer = AutoTokenizer.from_pretrained(self.model_name, token=self.access_token, cache_dir=self.local_model_path)
+        model = AutoModelForCausalLM.from_pretrained(self.model_name, token=self.access_token,  cache_dir=self.local_model_path, torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32)
         
         tokenizer.save_pretrained(self.local_model_path)
         model.save_pretrained(self.local_model_path)
