@@ -6,3 +6,4 @@ __pycache__
 chat_server.log
 build
 dist
+.env
