@@ -52,7 +52,8 @@ async def handle_client(websocket):
 
                 data=json.loads(message)
                 if data.get("type") == "disconnect":
-                    break  # Exit the loop when user explicitly disconnects
+                    # Exit the loop when user explicitly disconnects
+                    break  
 
                 if data.get("type") == "chat":
                     # Add message to processing queue
