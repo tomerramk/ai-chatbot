@@ -1,6 +1,7 @@
 # AI Chatrooom
 
-AI Chatroom is an AI-powered real-time chatroom application with support for multiple AI personalities, powered by a Python websockets server and a Vite-based React frontend.
+AI Chatroom is an AI-powered real-time chatroom application with support for multiple AI personalities, powered by a Python websockets server and a Vite-based React frontend.  
+Supports downloading and changing models using [Hugging Face](https://huggingface.co/models).
 
 ## Features
 
@@ -36,7 +37,7 @@ AI Chatroom is an AI-powered real-time chatroom application with support for mul
 - Npm
 - Node.js
 
-## Installation
+## Getting Started
 
 ## Backend (Python websockets)
 
@@ -54,6 +55,8 @@ AI Chatroom is an AI-powered real-time chatroom application with support for mul
    ```pwsh
    python main.py
    ```
+4. Enter model name, optional access token and server port.
+   All environment variables can be defined in a `.env` file, using `command-line arguments` or by manual input when prompted.
 
 ### Building Executable
 
@@ -78,10 +81,10 @@ AI Chatroom is an AI-powered real-time chatroom application with support for mul
     ```
 
 4.  Package with pyinstaller  
-    (`--onefile` flag works but due to the very big transformers library the exe becomes over 2GB)
     ```pwsh
      pyinstaller --name server --hidden-import=asyncio --hidden-import=websockets --hidden-import=dotenv --hidden-import=transformers --hidden-import=pytz --add-data config/*.py:config --add-data logs/*.py:logs --add-data models/*.py:models --add-data utils/*.py:utils --add-data workers/*.py:workers main.py
     ```
+    *(`--onefile` flag works too but due to the very big transformers library the exe becomes over 2GB)  
     The `server.exe` will be available under `backend/dist/dist`.
 
 ## Frontend (Vite + React)
@@ -122,4 +125,4 @@ The Application will become available at `localhost:3000`
    ```pwsh
    npm run package
    ```
-   The packed application will be located under `frontend/release-builds`
+   The packaged application will be located under `frontend/release-builds`
