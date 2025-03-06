@@ -4,7 +4,6 @@ import ChatPage from "@pages/ChatPage";
 import LoginPage from "@pages/LoginPage";
 import Layout from "@components/Layout";
 import ErrorPage from "./pages/ErrorPage";
-// import NotFound from "./pages/NotFound";
 
 const router = createHashRouter([
   {

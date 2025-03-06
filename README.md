@@ -1,6 +1,6 @@
 # AI Chatrooom
 
-AI Chatroom is a real-time chat application with support for multiple AI personalities, powered by a Python websockets server and a Vite-based React frontend.
+AI Chatroom is an AI-powered real-time chatroom application with support for multiple AI personalities, powered by a Python websockets server and a Vite-based React frontend.
 
 ## Features
 
@@ -38,7 +38,7 @@ AI Chatroom is a real-time chat application with support for multiple AI persona
 
 ## Installation
 
-### Backend (Python websockets)
+## Backend (Python websockets)
 
 ### Running locally
 
@@ -65,7 +65,7 @@ AI Chatroom is a real-time chat application with support for multiple AI persona
     cd backend
     ```
 
-2.  Obfuscate with pyarmor
+2.  Obfuscate with `pyarmor`
 
     ```pwsh
     pyarmor gen -O dist -r config logs models utils workers main.py
@@ -83,14 +83,6 @@ AI Chatroom is a real-time chat application with support for multiple AI persona
      pyinstaller --name server --hidden-import=asyncio --hidden-import=websockets --hidden-import=dotenv --hidden-import=transformers --hidden-import=pytz --add-data config/*.py:config --add-data logs/*.py:logs --add-data models/*.py:models --add-data utils/*.py:utils --add-data workers/*.py:workers main.py
     ```
     The `server.exe` will be available under `backend/dist/dist`.
-
-### Making Changes
-
-The backend uses local dynamic hash verification for obfuscated exe, so after making changes to `main.py` the hash needs to be generated again and replaced in `verify.py` before running the build commands.
-
-```pwsh
-certutil -hashfile main.py SHA256
-```
 
 ## Frontend (Vite + React)
 
