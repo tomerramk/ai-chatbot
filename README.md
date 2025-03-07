@@ -128,4 +128,4 @@ The Application will become available at `localhost:3000`
    ```pwsh
    npm run package
    ```
-   The packaged application will be located under `frontend/release-builds`
+   The packaged application will be located under `frontend/dist/release-builds`
